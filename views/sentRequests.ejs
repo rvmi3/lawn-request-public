@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("includes/head")%>
+  </head>
+  <body>
+    <%- include("includes/header") %>
+    <div class="container mt-5 w-50" id="sent-request-body">
+      <ul class="list-group">
+        <h2>Your Requests</h2>
+        <p>Limit: 5</p>
+        <p>Current Requests: <%=locals.cr%></p>
+        <% if (requests.length === 0) { %>
+        <li class="list-group-item">No Requests Made</li>
+        <% } if(locals.cr == 5){%>
+        <li class="list-group-item"><strong>Requests Full</strong></li>
+        <%} for (const req of requests) { %>
+        <li class="list-group-item">
+          <%if(req.accepted){%>
+          <div class="d-flex justify-content-between">
+            <p>To: <%= req.to %></p>
+            <p style="color: green">Accepted</p>
+          </div>
+
+          <p>Will Be Completed By <%= req.when %></p>
+
+          <div class="d-flex">
+            <form action="/complete-sent" method="post">
+              <%- include("includes/token") %>
+              <input type="text" name="destination" hidden value="<%= req.destination %>" />
+              <button class="btn btn-success mr-1">Report as Complete</button>
+            </form>
+            <form action="/cancel-sent" method="post">
+              <%- include("includes/token") %>
+              <input type="text" name="destination" hidden value="<%= req.destination %>" />
+              <button class="btn btn-danger">Cancel Job</button>
+            </form>
+          </div>
+          <%}else{%>
+          <p>To: <%= req.to %></p>
+          <p>Request made on <%= req.when %></p>
+          <p>Description: <%= req.description %></p>
+          <form action="/cancel-sent" method="post">
+            <%- include("includes/token") %>
+            <input type="text" name="destination" hidden value="<%= req.destination %>" />
+            <button class="btn btn-danger">Cancel Request</button>
+          </form>
+
+          <%}%>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+  </body>
+</html>

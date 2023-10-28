@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('includes/head') %>
+    <style>
+      .time {
+        display: none;
+      }
+    </style>
+    <script src="/scripts/dayAdjust.js" defer></script>
+  </head>
+  <body>
+    <%- include('includes/header') %>
+
+    <form action="/availability" method="POST" id="post-form-availability" class="w-50 mx-auto">
+      <h2>Availability</h2>
+      <p>Select days, then enter time information</p>
+      <%- include('includes/token') %>
+
+      <section id="availability">
+        <% const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]; %> <% daysOfWeek.forEach(day => { %>
+        <div class="day-section">
+          <label for="<%= day.toLowerCase() %>" class="label"><%= day.charAt(0).toUpperCase() + day.slice(1) %></label>
+          <input type="checkbox" class="form-check-input checkbox ml-1" value="<%= day %>" name="<%= day.toLowerCase() %>" />
+
+          <div class="time">
+            <div class="d-flex w-75 mb-2 align-items-center">
+              <label for="requests" class="label"><strong>Requests Allowed Per Day -</strong> </label>
+              <input type="number" class="form-control w-25 ml-1" name="requests" value="1" />
+            </div>
+
+            <section class="time-selection d-flex w-75" id="time-selection">
+              <select name="hours-start" class="custom-select hours-start">
+                <option value="0">12:00</option>
+                <option value="1">1:00</option>
+                <option value="2">2:00</option>
+                <option value="3">3:00</option>
+                <option value="4">4:00</option>
+                <option value="5">5:00</option>
+                <option value="6">6:00</option>
+                <option value="7">7:00</option>
+                <option value="8">8:00</option>
+                <option value="9">9:00</option>
+                <option value="10">10:00</option>
+                <option value="11">11:00</option>
+              </select>
+              <select name="hours-start-tod" class="custom-select hours-start-tod">
+                <option value="am">AM</option>
+                <option value="pm">PM</option>
+              </select>
+              <span class="m-3"></span>
+
+              <select name="hours-end" class="custom-select hours-end">
+                <option value="0">12:00</option>
+                <option value="1">1:00</option>
+                <option value="2">2:00</option>
+                <option value="3">3:00</option>
+                <option value="4">4:00</option>
+                <option value="5">5:00</option>
+                <option value="6">6:00</option>
+                <option value="7">7:00</option>
+                <option value="8">8:00</option>
+                <option value="9">9:00</option>
+                <option value="10">10:00</option>
+                <option value="11">11:00</option>
+              </select>
+              <select name="hours-end-tod" class="custom-select hours-end-tod">
+                <option value="am">AM</option>
+                <option value="pm">PM</option>
+              </select>
+            </section>
+          </div>
+        </div>
+        <%})%>
+      </section>
+
+      <button id="submit-btn" class="btn" style="background-color: #68a357; color: white">Update</button>
+    </form>
+    <%- include('includes/footer') %>
+  </body>
+</html>

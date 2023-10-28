@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('includes/head') %>
+    <style>
+      .rotate-icon {
+        transition: transform 0.3s;
+      }
+      .rotate-icon.rotated {
+        transform: rotate(180deg);
+      }
+    </style>
+    <script src="/scripts/requests.js" defer></script>
+  </head>
+  <body>
+    <% function militaryToRegularTime(militaryTime) { var hours = parseInt(militaryTime); var ampm = 'am'; if (hours >= 12) { ampm = 'pm'; if (hours > 12) { hours -= 12; } } return hours + ' ' + ampm;
+    } %> <%- include('includes/header') %>
+    <div class="mx-auto" style="width: 60%" id="profile-preview">
+      <div class="list-group-item border p-4 mb-1" style="border-radius: 10px">
+        <div class="row">
+          <div class="col-md-2">
+            <div style="border-radius: 50%; overflow: hidden; width: 150px; height: 150px; box-shadow: 0 0 5px #125200b9">
+              <img src="<%=ls.profile%>" alt="" class="img-fluid" id="image-container" /><%if(!ls.profile){%><img
+                src="../images/profile.jpg"
+                alt=""
+                class="img-fluid"
+                id="image-container"
+                style="transform: scale(0.5)"
+              /><%}%>
+            </div>
+          </div>
+          <div class="col-md-9">
+            <h4><%=ls.name%></h4>
+            <p>Operating in <%=ls.zip%>, <%=ls.city%></p>
+            <p>Completed <%=ls.completed%> job(s)</p>
+            <p><%=ls.description%></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <p>Expand For Availability</p>
+            <a class="d-flex" data-toggle="collapse" href="#availabilitySection<%=ls._id%>" role="button" aria-expanded="false" aria-controls="availabilitySection">
+              <i class="fas fa-chevron-down mr-2 rotate"></i>
+            </a>
+            <div class="collapse" id="availabilitySection<%=ls._id%>">
+              <section id="availability">
+                <table class="table table-responsive">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Sunday</th>
+                      <th>Monday</th>
+                      <th>Tuesday</th>
+                      <th>Wednesday</th>
+                      <th>Thursday</th>
+                      <th>Friday</th>
+                      <th>Saturday</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th>Start Time</th>
+                      <% var daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']; %> <% daysOfWeek.forEach(function(day) { let start =
+                      militaryToRegularTime(ls.availability[day].start); if(ls.availability[day].start == 0 ){start = "N/A"} %>
+                      <td><%= start %></td>
+                      <% }); %>
+                    </tr>
+                    <tr>
+                      <th>End Time</th>
+                      <% daysOfWeek.forEach(function(day) { let end = militaryToRegularTime(ls.availability[day].end); if(ls.availability[day].end == 0 ){end = "N/A"} %>
+                      <td><%= end %></td>
+                      <% }); %>
+                    </tr>
+                  </tbody>
+                </table>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%if(!ls.profile){%>
+      <form action="/profile" method="POST" enctype="multipart/form-data">
+        <%- include('includes/token') %>
+        <label for="image" class="m-0 btn btn-sm mb-1" style="background-color: #68a357; color: white" id="add-file"> Add Profile Picture </label>
+        <input type="file" name="image" id="image" hidden />
+        <button class="m-0 btn btn-sm mb-1" style="background-color: #68a357; color: white; display: none" id="upload" type="submit">Upload Picture</button>
+      </form>
+
+      <%}%> <%if(ls.profile){%>
+      <form action="/profile" method="POST" enctype="multipart/form-data">
+        <%- include('includes/token') %>
+        <label for="image" class="m-0 btn btn-sm mb-1" style="background-color: #68a357; color: white" id="add-file"> Change Profile Picture</label>
+        <input type="file" name="image" id="image" hidden />
+        <button class="m-0 btn btn-sm mb-1" style="background-color: #68a357; color: white; display: none" id="upload" type="submit">Upload Picture</button>
+      </form>
+      <%}%>
+      <br />
+      <div class="landcaper-btns d-flex flex-column flex-sm-row justify-content-start mb-3 w-75">
+        <div class="mb-2 mb-sm-0">
+          <button class="btn btn-sm" style="background-color: #125200; color: white">
+            <a href="/edit" class="text-white">Edit Availability and Descriptions</a>
+          </button>
+        </div>
+
+        <div class="mb-2 mb-sm-0">
+          <form action="/pause" method="post">
+            <%- include('includes/token') %> <%if(ls.isPaused){%>
+            <button class="btn btn-success btn-sm">Resume Requests</button>
+            <%}else{%>
+            <button class="btn btn-danger btn-sm">Pause Requests</button>
+            <%}%>
+          </form>
+        </div>
+
+        <div class="mb-2 mb-sm-0">
+          <form action="/enable" method="post">
+            <%- include('includes/token') %> <%if(ls.hasOffline){%>
+            <button class="btn btn-danger btn-sm">Disable Offline Requests</button>
+            <%}else{%>
+            <button class="btn btn-success btn-sm">Enable Offline Requests</button>
+            <%}%>
+          </form>
+        </div>
+
+        <div class="mb-2 mb-sm-0">
+          <form action="/reset" method="post">
+            <%- include('includes/token') %>
+            <button class="btn btn-warning btn-sm">Reset Requests</button>
+          </form>
+        </div>
+      </div>
+
+      <%if(limit !== 0 && !ls.isPaused){%>
+      <p class="m-1">Requests Today: <%=cr%></p>
+      <p class="m-1">Request Limit: <%=limit%></p>
+      <%}else if(limit === 0 && ls.hasOffline){%>
+      <p class="m-1">Requests Today: <%=cr%></p>
+      <p class="m-1" style="color: green">Offline Requests Enabled</p>
+      <%}else if(ls.isPaused && limit !== 0 ){%>
+      <p class="m-1" style="color: orange">Requests Paused</p>
+      <p class="m-1">Requests Today: <%=cr%></p>
+      <p class="m-1">Request Limit: <%=limit%></p>
+      <%}else{%>
+      <p class="m-1" style="color: red">Offline</p>
+      <%}%>
+
+      <ul class="list-group m-2">
+        <h3>Requests</h3>
+        <%if(requests.length === 0){%>
+        <p>No Requests</p>
+        <%}%> <%for(const req of requests){%>
+        <li class="list-group-item w-50" id="request-list-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <p><%=req.address.address%>, <%=req.address.zip%>, <%=req.address.city%></p>
+            </div>
+            <div class="d-flex">
+              <form action="/accept" method="post">
+                <%- include('includes/token') %>
+                <input type="text" hidden name="id" value="<%=req.requestId%>" />
+                <button class="btn btn-primary btn-sm">Accept</button>
+              </form>
+              <button class="btn btn-danger btn-sm ml-2">
+                <a href="/reject/<%=req.requestId%>" class="text-white">Reject</a>
+              </button>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse" data-target="#description<%=req.requestId%>">
+            Description
+            <i class="fas fa-chevron-down ml-2"></i>
+          </button>
+          <div id="description<%=req.requestId%>" class="collapse">
+            <p><%=req.description%></p>
+          </div>
+        </li>
+
+        <%}%>
+      </ul>
+
+      <ul class="list-group m-2">
+        <h3>Accepted</h3>
+        <%for(const acc of accepted){%>
+        <li class="list-group-item w-50" id="accepted-list-item">
+          <div class="d-flex justify-content-between">
+            <strong style="align-items: center"><%=acc.address%></strong>
+            <a href="https://www.google.com/maps/search/<%=acc.search%>" class="btn btn-info btn-sm" target="_blank"> Location on google maps </a>
+          </div>
+
+          <div class="d-flex mt-3 mb-1">
+            <form action="/complete" method="post">
+              <%- include('includes/token') %>
+              <input type="text" hidden value="<%=acc.destinationId%>" name="destinationId" />
+              <button class="btn btn-success btn-sm">Complete</button>
+            </form>
+            <button class="btn btn-danger btn-sm ml-1" id="reject">
+              <a href="/cancel/<%=acc.destinationId%>" class="text-white">Cancel</a>
+            </button>
+          </div>
+          <p>Must complete by: <%=acc.displayExpiration%></p>
+        </li>
+        <%}%>
+      </ul>
+    </div>
+
+    <%- include('includes/footer') %>
+    <!-- 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+JTp5h4uFLwqY9i+gVz8yGJwfhC4GT7b7IqjF4y1plk2tw73" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+      integrity="sha384-ht5FUGs2Pn772EX7fptHtuL2l3Ulnop52GqFp1f3P5l5F5F5F5F5F5F5F5F5F5F5F5"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+      integrity="sha384-pzjw6b7vb7j9/msw5td2dkD5ayYq8Ct6L3Bk5vFp6rvqF5F5F5F5F5F5F5F5F5F5F5"
+      crossorigin="anonymous"
+    ></script>
+    -->
+  </body>
+</html>

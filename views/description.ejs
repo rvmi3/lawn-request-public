@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('includes/head') %>
+
+    <!-- <script src="/scripts/priceBar.js" defer></script> -->
+  </head>
+  <body>
+    <%- include('includes/header') %>
+
+    <div class="container mt-5 w-25" id="description-body">
+      <h2>Description</h2>
+      <form action="/description" method="POST">
+        <%- include('includes/token') %>
+        <div class="form-group">
+          <label for="desc">This is a small description of what you can do, include price range, capabilities, and different landscaping options (Bush trimming, Lawn mowing, etc)</label>
+          <textarea class="form-control" name="desc" rows="6" maxlength="500" required></textarea>
+        </div>
+        <button type="submit" class="btn" style="background-color: #68a357; color: white">Update</button>
+      </form>
+    </div>
+
+    <%- include('includes/footer') %>
+  </body>
+</html>

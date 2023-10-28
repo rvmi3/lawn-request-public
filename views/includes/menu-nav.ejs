@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-lg navbar-light mb-4 w-75 mx-auto" style="background-color: #68a357; border: solid 3px #125200; border-radius: 4px; margin-top: 5px" id="head-menu-bar">
+  <div class="container">
+    <a class="navbar-brand" href="/">Your Brand</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end p-3" id="navbarNav">
+      <ul class="navbar-nav">
+        <% if (locals.isAuth) { if (!locals.isLs) { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/register" style="color: #125200">Register as a landscaper</a>
+        </li>
+        <% } if (locals.isLs) { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/overview" style="color: #125200">Overview</a>
+        </li>
+        <% } %>
+        <li class="nav-item">
+          <a class="nav-link" href="/sent" style="color: #125200">Sent Requests</a>
+        </li>
+        <li class="nav-item">
+          <form action="/logout" method="POST">
+            <%- include('./token') %>
+            <button type="submit" class="btn" style="background-color: #125200; color: white">Logout</button>
+          </form>
+        </li>
+        <% } if (!locals.isAuth) { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/login">
+            <button type="button" class="btn btn-secondary">Login</button>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/signup">
+            <button type="button" class="btn" style="background-color: #125200; color: white">Sign Up</button>
+          </a>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>

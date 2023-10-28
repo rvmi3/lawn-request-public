@@ -1,0 +1,84 @@
+<html lang="en">
+  <head>
+    <%- include('includes/head') %>
+    <style>
+      .time {
+        display: none;
+      }
+    </style>
+    <!-- <script src="/scripts/dayAdjust.js" defer></script> -->
+    <script src="/scripts/check.js" defer></script>
+  </head>
+  <body>
+    <%- include('includes/header') %>
+
+    <form action="/updateSettings" method="POST" id="post-form-availability" class="w-50 mx-auto">
+      <%- include('includes/token') %>
+      <div id="location" class="w-50">
+        <label for="zip" class="label">Zip Code</label>
+        <input type="number" class="form-control" value="<%=ls.zip%>" name="zip" />
+        <label for="city" class="label">City</label>
+        <input type="text" class="form-control" name="city" value="<%=ls.city%>" />
+      </div>
+
+      <% const daysOfWeek = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]; %> <% daysOfWeek.forEach((day) => { %>
+      <div class="day-section">
+        <label for="<%= day %>" class="label"><%= day.charAt(0).toUpperCase() + day.slice(1) %></label>
+        <input type="checkbox" class="form-check-input checkbox ml-1" value="<%= day %>" name="<%= day %>" />
+        <div class="time">
+          <div class="d-flex w-75 mb-2 align-items-center">
+            <label for="requests" class="label"><strong>Requests Allowed Per Day -</strong> </label>
+            <input type="number" class="form-control w-25 ml-1" name="requests" value="<%= ls.availability[day].rpd %>" />
+          </div>
+
+          <section class="time-selection d-flex w-75" id="time-selection">
+            <select name="hours-start" class="custom-select hours-start">
+              <option value="0">12:00</option>
+              <option value="1">1:00</option>
+              <option value="2">2:00</option>
+              <option value="3">3:00</option>
+              <option value="4">4:00</option>
+              <option value="5">5:00</option>
+              <option value="6">6:00</option>
+              <option value="7">7:00</option>
+              <option value="8">8:00</option>
+              <option value="9">9:00</option>
+              <option value="10">10:00</option>
+              <option value="11">11:00</option>
+            </select>
+            <select name="hours-start-tod" class="custom-select hours-start-tod">
+              <option value="am">AM</option>
+              <option value="pm">PM</option>
+            </select>
+            <span class="m-3"></span>
+
+            <select name="hours-end" class="custom-select hours-end">
+              <option value="0">12:00</option>
+              <option value="1">1:00</option>
+              <option value="2">2:00</option>
+              <option value="3">3:00</option>
+              <option value="4">4:00</option>
+              <option value="5">5:00</option>
+              <option value="6">6:00</option>
+              <option value="7">7:00</option>
+              <option value="8">8:00</option>
+              <option value="9">9:00</option>
+              <option value="10">10:00</option>
+              <option value="11">11:00</option>
+            </select>
+            <select name="hours-end-tod" class="custom-select hours-end-tod">
+              <option value="am">AM</option>
+              <option value="pm">PM</option>
+            </select>
+          </section>
+        </div>
+      </div>
+      <% }); %>
+      <label for="desc" class="label"><strong>Description</strong> </label>
+      <textarea name="desc" class="form-control" cols="30" rows="10" maxlength="500"><%=ls.description%></textarea>
+
+      <button id="submit-btn" class="btn" style="background-color: #68a357; color: white">Update</button>
+    </form>
+    <%- include('includes/footer') %>
+  </body>
+</html>

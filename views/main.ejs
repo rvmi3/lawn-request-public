@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('includes/head') %>
+    <style>
+      .rotate {
+        transition: transform 0.2s;
+      }
+      .collapsed .rotate {
+        transform: rotate(180deg);
+      }
+      a {
+        text-decoration: none;
+      }
+    </style>
+    <script src="/scripts/searchSuggestions.js" defer></script>
+  </head>
+  <body>
+    <%-include('includes/header')%> <% function militaryToRegularTime(militaryTime) { var hours = parseInt(militaryTime); var ampm = 'am'; if (hours >= 12) { ampm = 'pm'; if (hours > 12) { hours -=
+    12; } } return hours + ' ' + ampm; } %>
+
+    <div class="container mx-auto">
+      <div class="d-flex justify-content-between">
+        <form class="form-inline" action="/" method="get" style="width: 50%">
+          <div class="input-group w-50 mb-2" id="search-bar">
+            <label for="search" class="sr-only">Enter zip code or city</label>
+            <input type="text" class="form-control rounded" name="search" placeholder="Search" value="<%=search%>" />
+            <div class="input-group-append">
+              <button type="submit" class="btn" style="background-color: #68a357">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-check ml-3">
+            <input type="checkbox" class="form-check-input" id="unavailable" name="unavailable" />
+            <label class="form-check-label" for="unavailable">Include unavailable</label>
+          </div>
+        </form>
+        <p>Showing <%=results%> result(s)</p>
+      </div>
+
+      <% if(results < 1){ %>
+      <p class="text-center">Can't find anyone? Try searching for neighboring zip codes/cities</p>
+      <% } %>
+
+      <ul class="list-group">
+        <% for (const ls of landscapers) { %>
+
+        <li class="list-group-item border p-4 rounded mb-1 user-list">
+          <div class="row">
+            <div class="col-md-2">
+              <div style="border-radius: 50%; overflow: hidden; width: 9.375rem; height: 9.375rem; box-shadow: 0 0 5px #125200b9; margin-bottom: 10px">
+                <img src="<%=ls.profile%>" alt="" class="img-fluid" id="image-container" /><%if(!ls.profile){%><img
+                  src="../images/profile.jpg"
+                  alt=""
+                  class="img-fluid"
+                  id="image-container"
+                  style="transform: scale(0.5)"
+                /><%}%>
+              </div>
+            </div>
+            <div class="col-md-9">
+              <h4><%=ls.name%></h4>
+              <p>Operates in <%=ls.zip%>, <%=ls.city%></p>
+              <strong><p>Has completed <%=ls.completed%> job(s)</p></strong>
+              <%const rand = Math.ceil(Math.random() * 10000)%>
+              <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse" data-target="#description<%=rand%>">
+                Description
+                <i class="fas fa-chevron-down ml-2"></i>
+              </button>
+              <a href="/comment/<%=ls._id%>" class="btn btn-sm" style="background-color: #68a357; color: white">View Comments</a>
+              <div id="description<%=rand%>" class="collapse">
+                <p><%=ls.description%></p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p>Expand For Availability</p>
+              <a class="d-flex" data-toggle="collapse" href="#availabilitySection<%=ls._id%>" role="button" aria-expanded="false" aria-controls="availabilitySection">
+                <i class="fas fa-chevron-down mr-2 rotate"></i>
+              </a>
+              <div class="collapse" id="availabilitySection<%=ls._id%>">
+                <section id="availability">
+                  <table class="table table-responsive">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>Sunday</th>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Saturday</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th>Start Time</th>
+                        <% var daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']; %> <% daysOfWeek.forEach(function(day) { let start =
+                        militaryToRegularTime(ls.availability[day].start); if(ls.availability[day].start == 0 ){start = "N/A"} %>
+                        <td><%= start %></td>
+                        <% }); %>
+                      </tr>
+                      <tr>
+                        <th>End Time</th>
+                        <% daysOfWeek.forEach(function(day) { let end = militaryToRegularTime(ls.availability[day].end); if(ls.availability[day].end == 0 ){end = "N/A"} %>
+                        <td><%= end %></td>
+                        <% }); %>
+                      </tr>
+                    </tbody>
+                  </table>
+                </section>
+              </div>
+            </div>
+          </div>
+          <% if (locals.userId !== ls._id) { %>
+          <div class="mt-3">
+            <a href="/request/<%=ls._id%>" class="btn" style="background-color: #68a357; color: white">Request</a>
+          </div>
+          <% } else { %>
+          <strong class="text-success">YOU</strong>
+          <% } %> <% if (ls.isFull) { %>
+          <strong class="text-danger">Requests are full</strong>
+          <% } %>
+        </li>
+        <% } %>
+      </ul>
+      <div id="pagination" class="d-flex justify-content-center">
+        <ul class="pagination">
+          <% for (let i = 1; i <= pageCount; i++) { %>
+          <li class="page-item">
+            <a class="page-link" href="/?page=<%=i%>"><%=i%></a>
+          </li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+
+    <%- include('includes/footer') %>
+  </body>
+</html>
