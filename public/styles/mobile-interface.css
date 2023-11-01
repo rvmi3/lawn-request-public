@@ -1,6 +1,48 @@
 .landcaper-btns > * button {
   margin-right: 0.25rem;
 }
+@media (max-width: 810px) {
+  #head-menu-bar {
+    width: 100% !important;
+    border: solid 1px #125200 !important;
+    margin-top: 0px !important;
+    border-radius: 0px !important;
+  }
+  #post-form-availability {
+    width: 100% !important;
+    padding: 0.75rem !important;
+  }
+  #search-bar {
+    width: 100% !important;
+  }
+
+  #time-selection,
+  #profile-preview,
+  #sent-request-body,
+  #address-registration-body,
+  #description-body,
+  #request-form-body,
+  #request-list-item {
+    width: 90% !important;
+  }
+
+  #landscaper-card,
+  #comments-body,
+  #accepted-list-item {
+    width: 95% !important;
+  }
+
+  #comment-section,
+  #none-found {
+    width: 95% !important;
+    margin: auto;
+    text-align: center;
+  }
+
+  #comment-form {
+    width: 100% !important;
+  }
+}
 
 @media (max-width: 767px) {
   #head-menu-bar {
@@ -33,9 +75,14 @@
     width: 95% !important;
   }
 
-  #comment-section {
+  #comment-section,
+  #none-found {
     width: 95% !important;
     margin: auto;
     text-align: center;
+  }
+
+  #comment-form {
+    width: 100% !important;
   }
 }

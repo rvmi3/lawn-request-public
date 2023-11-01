@@ -61,6 +61,7 @@
             </div>
             <div class="col-md-9">
               <h4><%=ls.name%></h4>
+
               <p>Operates in <%=ls.zip%>, <%=ls.city%></p>
               <strong><p>Has completed <%=ls.completed%> job(s)</p></strong>
               <%const rand = Math.ceil(Math.random() * 10000)%>
@@ -115,15 +116,21 @@
               </div>
             </div>
           </div>
-          <% if (locals.userId !== ls._id) { %>
-          <div class="mt-3">
-            <a href="/request/<%=ls._id%>" class="btn" style="background-color: #68a357; color: white">Request</a>
-          </div>
+          <% if (ls.isPaused) { %>
+          <strong class="text-warning">Requests are paused</strong>
           <% } else { %>
           <strong class="text-success">YOU</strong>
           <% } %> <% if (ls.isFull) { %>
           <strong class="text-danger">Requests are full</strong>
-          <% } %>
+          <% } if(locals.userId !== ls._id && !ls.isFull && !ls.isPaused){%>
+          <div class="mt-3">
+            <a href="/request/<%=ls._id%>" class="btn" style="background-color: #68a357; color: white">Request</a>
+          </div>
+          <%}%>
+          <form action="/save/<%=ls._id%>" method="post" class="mt-3">
+            <%-include('includes/token')%>
+            <button class="btn btn-sm" style="background-color: #68a357; color: white">Save Landscaper</button>
+          </form>
         </li>
         <% } %>
       </ul>
@@ -131,7 +138,7 @@
         <ul class="pagination">
           <% for (let i = 1; i <= pageCount; i++) { %>
           <li class="page-item">
-            <a class="page-link" href="/?page=<%=i%>"><%=i%></a>
+            <button class="page-link"><%=i%></button>
           </li>
           <% } %>
         </ul>

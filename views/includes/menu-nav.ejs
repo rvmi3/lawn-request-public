@@ -1,4 +1,8 @@
-<nav class="navbar navbar-expand-lg navbar-light mb-4 w-75 mx-auto" style="background-color: #68a357; border: solid 3px #125200; border-radius: 4px; margin-top: 5px" id="head-menu-bar">
+<nav
+  class="navbar navbar-expand-lg navbar-light mb-4 w-75 mx-auto"
+  style="background-color: #68a357; border: solid 3px #125200; border-radius: 4px; margin-top: 5px; background-image: linear-gradient(45deg, #57ac40, #68a357)"
+  id="head-menu-bar"
+>
   <div class="container">
     <a class="navbar-brand" href="/">Your Brand</a>
 
@@ -19,6 +23,9 @@
         <% } %>
         <li class="nav-item">
           <a class="nav-link" href="/sent" style="color: #125200">Sent Requests</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/saved" style="color: #125200">Saved Landscapers</a>
         </li>
         <li class="nav-item">
           <form action="/logout" method="POST">

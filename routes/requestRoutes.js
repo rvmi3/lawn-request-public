@@ -222,5 +222,32 @@ router.post("/complete-sent", async (req, res) => {
   transporter.close();
   res.redirect("/sent");
 });
+router.get("/saved", async function (req, res) {
+  let landscapers = [];
+  const user = await db.getDb().collection("users").findOne({ _id: res.locals.userId });
+  if (user.saved) {
+    for (const ls of user.saved) {
+      const lsf = await db.getDb().collection("landscapers").findOne({ _id: ls });
+      landscapers.push({ profile: lsf.profile, name: lsf.name, _id: lsf._id });
+    }
+  }
+
+  res.render("saved", { landscapers: landscapers });
+});
+router.post("/save/:id", async function (req, res) {
+  await db
+    .getDb()
+    .collection("users")
+    .updateOne({ _id: res.locals.userId, saved: { $nin: [req.params.id] } }, { $push: { saved: req.params.id } });
+  res.redirect("/saved");
+});
+
+router.post("/remove/:id", async function (req, res) {
+  await db
+    .getDb()
+    .collection("users")
+    .updateOne({ _id: res.locals.userId }, { $pull: { saved: req.params.id } });
+  res.redirect("/saved");
+});
 
 module.exports = router;

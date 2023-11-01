@@ -92,7 +92,7 @@ setInterval(async () => {
   await db
     .getDb()
     .collection("landscapers")
-    .updateMany({}, { $pull: { requests: { expiration: { $lte: new Date().getTime() } } } });
+    .updateMany({}, { $pull: { requests: { expiration: { $lte: new Date().getTime() } }, accepted: { expiration: { $lte: new Date().getTime() } } } });
 }, 15 * 60 * 1000);
 setInterval(day.checkAndResetRequests, 15 * 60 * 1000);
 setInterval(tempCode.deleteExpiredCodes, 60 * 15 * 1000);

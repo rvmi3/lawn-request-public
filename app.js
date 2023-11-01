@@ -76,6 +76,16 @@ app.use(function (req, res) {
   res.render("404", { message: "Page does not exist" });
 });
 
-db.connectToDatabase().then(function () {
-  app.listen(3000);
-});
+let PORT = 3000;
+
+if (process.env.PORT) {
+  port = process.env.PORT;
+}
+
+db.connectToDatabase()
+  .then(function () {
+    app.listen(PORT);
+  })
+  .catch((err) => {
+    console.error("Data base connection failed");
+  });
