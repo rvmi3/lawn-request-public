@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disclaimer</title>
+    <%- include('includes/head') %>
+  </head>
+  <body>
+    <%- include('includes/header') %>
+
+    <div class="container mt-5">
+      <h2>Before you get started...</h2>
+      <div style="border: solid 1px #125200; padding: 5px 10px">
+        <h4>For users seeking lawn services:</h4>
+        <p>When searching for a landscaper search for zip code or city. Searching for name is also an option</p>
+        <p>Availability doesnt only mean the times available for requests but the times the landscaper is working</p>
+        <p>Include desired times in request form</p>
+      </div>
+      <div style="border: solid 1px #125200; padding: 5px 10px" class="mt-2">
+        <h4>For users providing lawn services:</h4>
+        <p>Have a detailed description, this allows many users to understand what you provide</p>
+        <p>Setting available times will not automatically prevent users from requesting when you aren't available. Offline requests can be disabled in the <a href="/overview">overview</a> page</p>
+        <p>Requests can be rejected or cancelled but reason must be provided</p>
+      </div>
+      <div style="border: solid 1px #125200; padding: 5px 10px" class="mt-2">
+        <h4>One last thing:</h4>
+        <p>Having any troubles, questions, or suggestions, please contact me through the <a href="/contact">contact page</a>. I will most likely respond within the hour.</p>
+      </div>
+      <div class="mt-3 text-center">
+        <a href="/"><button class="btn" style="background-color: #125200; color: white">Continue</button></a>
+      </div>
+    </div>
+    <%-include("includes/footer")%>
+  </body>
+</html>

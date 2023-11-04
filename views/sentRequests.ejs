@@ -13,7 +13,7 @@
         <% if (requests.length === 0) { %>
         <li class="list-group-item">No Requests Made</li>
         <% } if(locals.cr == 5){%>
-        <li class="list-group-item"><strong>Requests Full</strong></li>
+        <li class="list-group-item mb-2"><strong>Requests Limit Reached, Resets in 24 hours</strong></li>
         <%} for (const req of requests) { %>
         <li class="list-group-item">
           <%if(req.accepted){%>

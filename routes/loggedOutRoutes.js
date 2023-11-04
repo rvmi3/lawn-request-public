@@ -47,7 +47,7 @@ router.post("/signup", async function (req, res, next) {
     const userConfPassword = req.body.confPassword;
     const userEmail = req.body.email;
     const userId = uuid.v4();
-    if (!firstName || !lastName || !userPassword || !userConfPassword || !userEmail) {
+    if (!firstName || !lastName || !userPassword || !userConfPassword || !userEmail || !req.body.agreement) {
       return res.redirect("/");
     }
     if (userPassword !== userConfPassword) {
@@ -92,6 +92,7 @@ router.post("/signup", async function (req, res, next) {
       verified: false,
       isLandscaper: false,
       cr: 0,
+      new: { disclaimer: false, start: false },
     };
     await db.getDb().collection("users").insertOne(user);
 
@@ -101,7 +102,7 @@ router.post("/signup", async function (req, res, next) {
         from: "<noreply-dous@dousdev.com>",
         to: userEmail,
         subject: "Account Verification",
-        html: `<h1>Hello ${firstName}</h1><p>This email is to verify account, account will be succesfully created after verifying. Link will expire in 5 minutes</p><strong>If link is expired, you must sign up again</strong><a href="http://localhost:3000/verify/${code}">Verify</a>`,
+        html: `<h1>Hello ${firstName}</h1><p>This email is to verify account, account will be succesfully created after verifying. Link will expire in 5 minutes</p><strong>If link is expired, you must sign up again</strong><a href="https://lawnrequest.com/verify/${code}">Verify</a>`,
       })
       .catch(async () => {
         await db.getDb().collection("errorLog").insertOne({

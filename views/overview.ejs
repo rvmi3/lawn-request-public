@@ -82,7 +82,7 @@
       <form action="/profile" method="POST" enctype="multipart/form-data">
         <%- include('includes/token') %>
         <label for="image" class="m-0 btn btn-sm mb-1" style="background-color: #68a357; color: white" id="add-file"> Add Profile Picture </label>
-        <input type="file" name="image" id="image" hidden />
+        <input type="file" name="image" id="image" hidden accept=".jpg, .jpeg, .png" />
         <button class="m-0 btn btn-sm mb-1" style="background-color: #68a357; color: white; display: none" id="upload" type="submit">Upload Picture</button>
       </form>
 

@@ -3,7 +3,7 @@ const tempCode = require("../models/tempCodes");
 const router = express.Router();
 const db = require("../data/database");
 const day = require("../models/requestsPerDay");
-
+const emailTransporter = require("../models/emailTransporter");
 const trimStringsMiddleware = require("../middlewares/trimStringMiddleware");
 const tokenMiddleware = require("../middlewares/tokenMiddleware");
 
@@ -18,9 +18,40 @@ router.use(uploader.single("image"));
 router.use(trimStringsMiddleware);
 router.use(tokenMiddleware);
 
-// router.get("/:term", async function (req, res) {
-//   res.render(req.params.term);
-// });
+router.post("/disclaimer", async function (req, res, next) {
+  if (!req.body.accept) {
+    res.redirect("../");
+    return;
+  }
+  await db
+    .getDb()
+    .collection("users")
+    .updateOne({ _id: res.locals.userId }, { $set: { ["new.disclaimer"]: true } });
+  req.session.trusted = true;
+  return res.redirect("/");
+});
+
+router.use(async function (req, res, next) {
+  if (!res.locals.isAuth) {
+    return next();
+  }
+  if (!req.session.trusted) {
+    return res.render("disclaimer");
+  }
+  if (!req.session.new) {
+    await db
+      .getDb()
+      .collection("users")
+      .updateOne({ _id: res.locals.userId }, { $set: { ["new.start"]: true } });
+    req.session.new = true;
+    return res.render("starting");
+  } else {
+    next();
+  }
+});
+router.get("/guide", async function (req, res) {
+  res.render("starting");
+});
 router.get("/", async function (req, res) {
   const search = new RegExp(req.query.search, "i");
 
@@ -58,17 +89,60 @@ router.use(loggedOutRoutes);
 
 router.use(function (req, res, next) {
   if (!res.locals.isAuth) {
-    res.redirect("/");
+    res.render("404", { message: "Create an account to access services" });
   } else {
     next();
   }
 });
+
+router.get("/contact", async function (req, res) {
+  res.render("contact");
+});
+router.post("/contact", async function (req, res, next) {
+  if (!req.body.subject || !req.body.message) {
+    return res.render("404", { message: "Missing Error Input" });
+  }
+
+  const userInfo = await db.getDb().collection("users").findOne({ _id: res.locals.userId });
+
+  if (!userInfo) {
+    return res.render("404", { message: "Error recieving user info" });
+  }
+
+  const commented = await db
+    .getDb()
+    .collection("contactLog")
+    .findOne({ from: userInfo._id, expiration: { $gte: new Date().getTime() } });
+  if (commented) {
+    return res.render("404", { message: "Must wait 24 hours before sending another message" });
+  }
+  await emailTransporter
+    .sendMail({
+      from: "<noreply-dous@dousdev.com>",
+      to: "addous72@gmail.com",
+      subject: `${userInfo.email}: ${req.body.subject} `,
+      html: `${req.body.message}`,
+    })
+    .then(
+      await db
+        .getDb()
+        .collection("contactLog")
+        .insertOne({ from: userInfo._id, subject: req.body.subject, message: req.body.message, expiration: new Date().getTime() + 24 * 60 * 60 * 1000 })
+    )
+    .then(res.render("confirm", { message: "Message succesfully sent!" }))
+    .catch((err) => {
+      console.log(err);
+      return next();
+    });
+  return;
+});
+
 router.use(registrationRoutes);
 router.use(requestRoutes);
 
 router.use(function (req, res, next) {
   if (!res.locals.isLs) {
-    return res.render("404", { message: "Not authorized" });
+    return res.render("404", { message: "Must register as a landscaper to access this page" });
   } else {
     next();
   }

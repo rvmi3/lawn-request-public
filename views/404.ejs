@@ -9,7 +9,12 @@
   </head>
   <body>
     <%- include('includes/header') %>
-    <h2>Error: <%=message%></h2>
-    <a href="/">Home</a>
+
+    <div class="container mt-5">
+      <div class="text-center">
+        <h2 class="text-danger">Error: <%= message %></h2>
+        <a href="/" class="btn mt-3" style="background-color: #125200; color: white">Home</a>
+      </div>
+    </div>
   </body>
 </html>

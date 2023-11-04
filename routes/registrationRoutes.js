@@ -5,7 +5,7 @@ const router = express.Router();
 router.get("/register", async function (req, res) {
   const user = await db.getDb().collection("users").findOne({ _id: res.locals.userId });
   if (user.address) {
-    return res.redirect("availability");
+    return res.redirect("/availability");
   }
   res.render("register");
 });
@@ -42,7 +42,13 @@ router.post("/register", async function (req, res, next) {
   }
 });
 router.get("/availability", async function (req, res) {
+  const usert = await db.getDb().collection("users").findOne({ _id: res.locals.userId });
+  if (!usert.address) {
+    return res.redirect("/register");
+  }
+
   const user = await db.getDb().collection("landscapers").findOne({ _id: res.locals.userId });
+
   if (!user || !user.availability) {
     return res.render("availability");
   }
@@ -109,6 +115,9 @@ router.post("/availability", async function (req, res, next) {
 });
 router.get("/description", async function (req, res) {
   const user = await db.getDb().collection("landscapers").findOne({ _id: res.locals.userId });
+  if (!user) {
+    return res.redirect("/availability");
+  }
   if (user.description) {
     return res.redirect("/");
   }

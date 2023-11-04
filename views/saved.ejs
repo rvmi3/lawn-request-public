@@ -4,11 +4,13 @@
     <%- include('includes/head') %>
   </head>
   <body>
-    <%- include('includes/header') %> <%if(landscapers.length === 0 ){%>
+    <%- include('includes/header') %>
+    <h2 class="mx-auto w-25 text-center mb-4">Saved Landscapers</h2>
+    <%if(landscapers.length === 0 ){%>
     <li class="list-group-item w-25 mx-auto text-center" id="none-found">No Landscapers Saved</li>
     <%}%> <%for(const ls of landscapers){%>
 
-    <div class="list-group-item border w-25 mx-auto" id="landscaper-card" style="border-radius: 10px">
+    <div class="list-group-item border w-25 mx-auto mb-1" id="landscaper-card" style="border-radius: 10px">
       <div class="d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center">
           <div style="border-radius: 50%; overflow: hidden; width: 50px; height: 50px; box-shadow: 0 0 5px #125200b9">

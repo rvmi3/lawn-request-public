@@ -1,3 +1,14 @@
-<%if(locals.isAuth){%>
-<p>Logged in as <%=locals.user%></p>
-<%}%>
+<div class="d-flex justify-content-between w-50 mx-auto mt-5" id="footer-body">
+  <%if(locals.isAuth){%>
+  <p>User ID: <strong> <%=locals.userId%></strong></p>
+  <%}%>
+  <div>
+    <a href="/guide">Guide</a>
+    <p style="display: inline">|</p>
+    <a href="https://drive.google.com/file/d/17nlds_KWR32t-dFacmHOVJJhcJIuEwLR/view">Privacy Policy</a>
+    <p style="display: inline">|</p>
+    <a href="https://drive.google.com/file/d/1BG5IpNqApcQOdieBJW-a1MuQMXtUcMFF/view?usp=sharing">Terms & Conditions</a>
+    <p style="display: inline">|</p>
+    <a href="/contact">Contact Us</a>
+  </div>
+</div>

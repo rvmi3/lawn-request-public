@@ -5,7 +5,14 @@
   </head>
   <body>
     <%- include('includes/header') %>
-    <h2><%=message%></h2>
-    <a href="/">Home</a> <%- include('includes/footer') %>
+
+    <div class="container mt-5">
+      <div class="text-center">
+        <h2><%= message %></h2>
+        <a href="/" class="btn mt-3" style="background-color: #125200; color: white">Home</a>
+      </div>
+    </div>
+
+    <%- include('includes/footer') %>
   </body>
 </html>

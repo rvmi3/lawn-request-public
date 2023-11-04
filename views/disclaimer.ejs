@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disclaimer</title>
+    <%- include('includes/head') %>
+  </head>
+  <body>
+    <%- include('includes/header') %>
+
+    <div class="container mt-5">
+      <h2>Disclaimer:</h2>
+      <div style="border: solid 1px #125200; padding: 5px 10px">
+        <p>
+          <strong>Lawn Request</strong> is a platform that connects users seeking landscaping services with nearby landscapers. We want to emphasize that our primary role is to facilitate contact
+          between users and landscapers. We are not responsible for any payments or financial transactions that occur between users and landscapers on our platform.
+        </p>
+        <p>
+          Please be aware that any payment disputes, issues with quality of service, or other concerns related to the landscaping services provided are the responsibility of the users and landscapers
+          involved. We do not take part in, mediate, or arbitrate in any disputes or financial transactions.
+        </p>
+        <p>
+          <strong>Lawn Request</strong> is committed to providing a reliable and efficient platform for connecting users with landscaping professionals, but we do not assume any liability for the
+          actions or conduct of users and landscapers using our service. Users should make informed decisions and use our platform at their own discretion.
+        </p>
+      </div>
+
+      <div class="text-center">
+        <form action="/disclaimer" method="post">
+          <div class="form-group">
+            <input type="checkbox" name="accept" />
+            <label for="accept">I understand and have read the disclaimer</label>
+          </div>
+          <button class="btn btn-success">Continue</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

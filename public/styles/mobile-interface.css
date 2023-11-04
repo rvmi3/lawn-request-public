@@ -1,6 +1,13 @@
 .landcaper-btns > * button {
   margin-right: 0.25rem;
 }
+
+#logo {
+  transition: scale 0.3s ease;
+}
+#logo:hover {
+  scale: 1.1;
+}
 @media (max-width: 810px) {
   #head-menu-bar {
     width: 100% !important;
@@ -28,7 +35,8 @@
 
   #landscaper-card,
   #comments-body,
-  #accepted-list-item {
+  #accepted-list-item,
+  #footer-body {
     width: 95% !important;
   }
 

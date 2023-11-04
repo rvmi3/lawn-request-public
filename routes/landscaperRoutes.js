@@ -270,7 +270,11 @@ router.post("/profile", async function (req, res) {
   let userImage = req.file;
 
   if (!userImage) {
-    res.status(404).render("404", { message: "No Image Provided" });
+    return res.status(404).render("404", { message: "No Image Provided" });
+  }
+  const allowedImageTypes = ["image/jpeg", "image/png"];
+  if (!allowedImageTypes.includes(req.file.mimetype)) {
+    return res.status(404).render("404", { message: "File must be image" });
   }
 
   await db

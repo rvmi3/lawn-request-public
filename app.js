@@ -50,6 +50,11 @@ app.use(async function (req, res, next) {
   res.locals.cr = user.cr;
 
   res.locals.name = user.name.first + " " + user.name.last;
+  if (user.new) {
+    req.session.trusted = user.new.disclaimer;
+    req.session.new = user.new.start;
+  }
+
   if (!user.address) {
     return next();
   }

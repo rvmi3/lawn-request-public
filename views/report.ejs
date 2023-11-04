@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('includes/head') %>
+
+    <!-- <script src="/scripts/priceBar.js" defer></script> -->
+  </head>
+  <body>
+    <%- include('includes/header') %>
+
+    <div class="container mt-5 w-25" id="description-body">
+      <h2>Reporting: <%=name%></h2>
+      <div style="border: solid 1px black; padding: 5px 10px">
+        <p class="mb-1">Before you report:</p>
+        <p class="text-danger mb-0">Reporting is only for issues concerning our platform.</p>
+        <p class="text-danger">Spam reporting will result in immediate ban</p>
+      </div>
+
+      <form action="/report" method="POST">
+        <%- include('includes/token') %>
+        <div class="form-group">
+          <label for="reason">Reason</label>
+          <textarea class="form-control" name="reason" rows="6" maxlength="500" required></textarea>
+        </div>
+        <input type="text" hidden value="<%=id%>" name="destination" />
+
+        <button type="submit" class="btn" style="background-color: #ff4444; color: white">Report</button>
+      </form>
+    </div>
+
+    <%- include('includes/footer') %>
+  </body>
+</html>
