@@ -8,7 +8,7 @@ const cors = require("cors");
 const mongoDBstore = require("connect-mongodb-session")(session);
 
 const store = new mongoDBstore({
-  uri: "mongodb://127.0.0.1:27017",
+  uri: db.mongoUrl,
   databaseName: "lawn",
   collection: "sessions",
 });
