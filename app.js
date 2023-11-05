@@ -84,7 +84,7 @@ app.use(function (req, res) {
 let PORT = 3000;
 
 if (process.env.PORT) {
-  port = process.env.PORT;
+  PORT = process.env.PORT;
 }
 
 db.connectToDatabase()
