@@ -119,11 +119,11 @@ router.post("/signup", async function (req, res, next) {
 router.get("/verify/:id", async function (req, res, next) {
   try {
     const code = req.params.id;
-    console.log(code);
+
     const user = await tempCode.getUser(code);
 
     const validate = await tempCode.validateCode(code, 5 * 60 * 1000);
-    console.log(validate);
+
     if (validate) {
       if (user.email) {
         await db
@@ -137,7 +137,6 @@ router.get("/verify/:id", async function (req, res, next) {
             subject: "Account Created",
             html: `<h1>Welcome ${user.name.first}</h1><p>Your account has succesfully been created</p>`,
           })
-          .then(console.log(`Email sent to ${user.email}`))
           .catch(async () => {
             await db.getDb().collection("errorLog").insertOne({
               destination: user.email,
