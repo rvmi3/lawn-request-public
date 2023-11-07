@@ -99,10 +99,10 @@ router.post("/signup", async function (req, res, next) {
     const code = await tempCode.generateCode(userEmail);
     await transporter
       .sendMail({
-        from: "<noreply-dous@dousdev.com>",
+        from: "<noreply-lawn@lawnrequest.com>",
         to: userEmail,
         subject: "Account Verification",
-        html: `<h1>Hello ${firstName}</h1><p>This email is to verify account, account will be succesfully created after verifying. Link will expire in 5 minutes</p><strong>If link is expired, you must sign up again</strong><a href="https://lawnrequest.com/verify/${code}">Verify</a>`,
+        html: `<h1>Hello ${firstName}</h1><p>This email is to verify account, account will be succesfully created after verifying. Link will expire in 5 minutes</p><strong>If link is expired, you must sign up again</strong><a href="https://www.lawnrequest.com/verify/${code}">Verify</a>`,
       })
       .catch(async () => {
         await db.getDb().collection("errorLog").insertOne({
@@ -132,7 +132,7 @@ router.get("/verify/:id", async function (req, res, next) {
           .updateOne({ _id: user._id }, { $set: { verified: true } });
         await transporter
           .sendMail({
-            from: "<noreply-dous@dousdev.com>",
+            from: "<noreply-lawn@lawnrequest.com>",
             to: user.email,
             subject: "Account Created",
             html: `<h1>Welcome ${user.name.first}</h1><p>Your account has succesfully been created</p>`,
@@ -234,10 +234,10 @@ router.post("/password-reset-request", async function (req, res, next) {
       const code = await tempCode.generateCode(foundUser.email);
 
       const mail = {
-        from: "<noreply-dous@dousdev.com>",
+        from: "<noreply-lawn@lawnrequest.com>",
         to: foundUser.email,
         subject: "Password Reset",
-        html: `<a href='http://localhost:3000/resetPassword/${code}'>Reset Password, Link will expire in 60 seconds</a>`,
+        html: `<a href='https://www.lawnrequest.com/resetPassword/${code}'>Reset Password, Link will expire in 60 seconds</a>`,
       };
       await transporter.sendMail(mail).catch(async () => {
         await db.getDb().collection("errorLog").insertOne({
@@ -307,10 +307,10 @@ router.post("/password-reset", async function (req, res, next) {
       .collection("users")
       .updateOne({ email: foundUser.email }, { $set: { password: hashedPassword } });
     const mail = {
-      from: "<noreply-dous@dousdev.com>",
+      from: "<noreply-lawn@lawnrequest.com>",
       to: foundUser.email,
       subject: "Password Has Been Reset",
-      html: `<p>Youre password was reset on ${new Date().toLocaleDateString()} </p>`,
+      html: `<p>Youre password was reset on ${new Date().toLocaleDateString()}, if this wasn't you please contact us immediately: <a href="https://www.lawnrequest.com/contact">Contact Page<a></p>`,
     };
     await transporter.sendMail(mail).catch(async () => {
       await db.getDb().collection("errorLog").insertOne({

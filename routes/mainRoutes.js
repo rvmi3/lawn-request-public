@@ -94,6 +94,67 @@ router.use(function (req, res, next) {
     next();
   }
 });
+router.get("/comment/:id", async function (req, res, next) {
+  const ls = await db.getDb().collection("landscapers").findOne({ _id: req.params.id });
+  if (!ls) {
+    return next();
+  }
+  const comments = await db.getDb().collection("comments").find({ landscaper: req.params.id }).toArray();
+
+  let sessionInputData = req.session.inputData;
+  if (!sessionInputData) {
+    sessionInputData = {
+      hasError: false,
+      message: "",
+    };
+  }
+  req.session.inputData = null;
+
+  res.render("comments", { ls: ls, comments: comments, inputData: sessionInputData });
+});
+router.post("/comment/:id", async function (req, res, next) {
+  const comment = req.body.comment;
+  if (!comment) {
+    return res.redirect("/");
+  }
+  const completed = await db.getDb().collection("completionLog").findOne({ landscaper: req.params.id, user: res.locals.userId });
+  if (!completed) {
+    req.session.inputData = {
+      hasError: true,
+      message: "Must have job completed by landscaper to comment",
+    };
+    req.session.save(function () {
+      res.redirect(`/comment/${req.params.id}`);
+    });
+    return;
+  }
+  const foundComment = await db.getDb().collection("comments").findOne({ landscaper: req.params.id, user: res.locals.name });
+  if (foundComment) {
+    req.session.inputData = {
+      hasError: true,
+      message: "Already commented",
+    };
+    req.session.save(function () {
+      res.redirect(`/comment/${req.params.id}`);
+    });
+    return;
+  }
+  const ls = await db.getDb().collection("landscapers").findOne({ _id: req.params.id });
+  await db.getDb().collection("comments").insertOne({ landscaper: req.params.id, user: res.locals.name, comment: comment, date: new Date().toLocaleDateString() });
+  await emailTransporter
+    .sendMail({
+      from: "<noreply-lawn@lawnrequest.com>",
+      to: ls.email,
+      subject: `New Comment`,
+      html: `<p><strong>User:</strong> ${res.locals.name}</p> <p><strong>Comment:</strong> ${comment}</p><p>View your comments here: <a href="https://www.lawnrequest.com/comment/${req.params.id}">Comments</a><p>`,
+    })
+    .catch((err) => {
+      console.log(err);
+      return next();
+    });
+  emailTransporter.close();
+  res.redirect(`/comment/${req.params.id}`);
+});
 
 router.get("/contact", async function (req, res) {
   res.render("contact");
@@ -118,9 +179,9 @@ router.post("/contact", async function (req, res, next) {
   }
   await emailTransporter
     .sendMail({
-      from: "<noreply-dous@dousdev.com>",
+      from: "<noreply-lawn@lawnrequest.com>",
       to: "addous72@gmail.com",
-      subject: `${userInfo.email}: ${req.body.subject} `,
+      subject: `CONTACT MESSAGE ${userInfo.email}: ${req.body.subject} `,
       html: `${req.body.message}`,
     })
     .then(
@@ -134,6 +195,7 @@ router.post("/contact", async function (req, res, next) {
       console.log(err);
       return next();
     });
+  emailTransporter.close();
   return;
 });
 

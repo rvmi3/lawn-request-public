@@ -1,5 +1,6 @@
 const express = require("express");
 const db = require("../data/database");
+const transporter = require("../models/emailTransporter");
 const router = express.Router();
 
 router.get("/register", async function (req, res) {
@@ -135,7 +136,22 @@ router.post("/description", async function (req, res, next) {
     if (result.matchedCount === 0) {
       return res.status(404).json({ message: "Landscaper not found" });
     }
-
+    await transporter
+      .sendMail({
+        from: "<noreply-lawn@lawnrequest.com>",
+        to: res.locals.user,
+        subject: `Landscaper Registration Complete! `,
+        html: `Your landscaper registration has been complete, your profile card is now displayed publicly for people to discover. Dont forget to set a profile picture!`,
+      })
+      .catch(async (err) => {
+        await db.getDb().collection("errorLog").insertOne({
+          destination: res.locals.user,
+          time: new Date().getTime(),
+        });
+        console.log(err);
+        return next();
+      });
+    transporter.close();
     req.session.isLandscaper = true;
     req.session.save(() => {
       res.redirect("/");

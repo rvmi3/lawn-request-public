@@ -103,7 +103,7 @@ router.post(
 
     await transporter
       .sendMail({
-        from: "<noreply-dous@dousdev.com>",
+        from: "<noreply-lawn@lawnrequest.com>",
         to: destination.email,
         subject: "Landscaping Request Accepted!",
         html: `<p>Your request has been accepted, expect landscaper to fullfill request within the dates: <strong>${currentDate}</strong> to <strong>${endDate}</strong>   </p>`,
@@ -164,7 +164,7 @@ router.post(
 
     await transporter
       .sendMail({
-        from: "<noreply-dous@dousdev.com>",
+        from: "<noreply-lawn@lawnrequest.com>",
         to: destination.email,
         subject: "Landscaping Request Rejected!",
         html: `<p>Your request has been rejected, this was the reason why: ${req.body.reason}</p>`,
@@ -191,7 +191,7 @@ router.post(
 
     await transporter
       .sendMail({
-        from: "<noreply-dous@dousdev.com>",
+        from: "<noreply-lawn@lawnrequest.com>",
         to: destination.email,
         subject: "Landscaping Request Cancelled!",
         html: `<p>Your request has been cancelled, this was the reason why: ${req.body.reason}</p>`,
@@ -219,10 +219,10 @@ router.post(
     const destination = await db.getDb().collection("users").findOne({ _id: req.body.destinationId });
     await transporter
       .sendMail({
-        from: "<noreply-dous@dousdev.com>",
+        from: "<noreply-lawn@lawnrequest.com>",
         to: destination.email,
         subject: "Landscaping Request Completed!",
-        html: `<p>Your request has been completed and fullfilled</p> <a href="http://localhost:3000/report">Report incomplete</a>`,
+        html: `<p>Your request has been completed and fullfilled</p> `,
       })
       .then(
         await db
@@ -283,56 +283,6 @@ router.post("/profile", async function (req, res) {
     .updateOne({ _id: res.locals.userId }, { $set: { profile: userImage.path } });
 
   res.redirect("/overview");
-});
-
-router.get("/comment/:id", async function (req, res, next) {
-  const ls = await db.getDb().collection("landscapers").findOne({ _id: req.params.id });
-  if (!ls) {
-    return next();
-  }
-  const comments = await db.getDb().collection("comments").find({ landscaper: req.params.id }).toArray();
-
-  let sessionInputData = req.session.inputData;
-  if (!sessionInputData) {
-    sessionInputData = {
-      hasError: false,
-      message: "",
-    };
-  }
-  req.session.inputData = null;
-
-  res.render("comments", { ls: ls, comments: comments, inputData: sessionInputData });
-});
-router.post("/comment/:id", async function (req, res) {
-  const comment = req.body.comment;
-  if (!comment) {
-    return res.redirect("/");
-  }
-  const completed = await db.getDb().collection("completionLog").findOne({ landscaper: req.params.id, user: res.locals.userId });
-  if (!completed) {
-    req.session.inputData = {
-      hasError: true,
-      message: "Must have job completed by landscaper to comment",
-    };
-    req.session.save(function () {
-      res.redirect(`/comment/${req.params.id}`);
-    });
-    return;
-  }
-  const foundComment = await db.getDb().collection("comments").findOne({ landscaper: req.params.id, user: res.locals.name });
-  if (foundComment) {
-    req.session.inputData = {
-      hasError: true,
-      message: "Already commented",
-    };
-    req.session.save(function () {
-      res.redirect(`/comment/${req.params.id}`);
-    });
-    return;
-  }
-
-  await db.getDb().collection("comments").insertOne({ landscaper: req.params.id, user: res.locals.name, comment: comment, date: new Date().toLocaleDateString() });
-  res.redirect(`/comment/${req.params.id}`);
 });
 
 module.exports = router;

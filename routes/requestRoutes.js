@@ -4,6 +4,7 @@ const router = express.Router();
 const transporter = require("../models/emailTransporter");
 const rq = require("../models/requestsPerDay");
 const { uuid } = require("uuidv4");
+const he = require("he");
 
 router.get("/request/:id", async function (req, res) {
   if (res.locals.userId === req.params.id) {
@@ -118,10 +119,10 @@ router.post("/request", async function (req, res, next) {
 
     await transporter
       .sendMail({
-        from: "<noreply-dous@dousdev.com>",
+        from: "<noreply-lawn@lawnrequest.com>",
         to: ls.email,
         subject: "Landscaping Request",
-        html: `<p>Landscaping request from ${res.locals.name} on ${new Date().toLocaleDateString()}</p><p>Request Description: ${req.body.desc}</p>`,
+        html: `Landscaping request from ${res.locals.name} on ${new Date().toLocaleDateString()}</p><p>Request Description: ${req.body.desc}`,
       })
       .catch(async () => {
         await db.getDb().collection("errorLog").insertOne({
@@ -183,14 +184,14 @@ router.post("/cancel-sent", async (req, res) => {
   }
   await transporter
     .sendMail({
-      from: "<noreply-dous@dousdev.com>",
+      from: "<noreply-lawn@lawnrequest.com>",
       to: landscaper.email,
       subject: "A Landscaping Request Has Been Cancelled!",
       html: `<p>${res.locals.name} has cancelled their request</p>`,
     })
     .then(
       await transporter.sendMail({
-        from: "<noreply-dous@dousdev.com>",
+        from: "<noreply-lawn@lawnrequest.com>",
         to: destination.email,
         subject: "Landscaping Request Cancelled!",
         html: `<p>You have cancelled your request for ${landscaper.name}</p>`,
@@ -229,7 +230,7 @@ router.post("/complete-sent", async (req, res) => {
 
   await transporter
     .sendMail({
-      from: "<noreply-dous@dousdev.com>",
+      from: "<noreply-lawn@lawnrequest.com>",
       to: res.locals.user,
       subject: "Landscaping Request Completed!",
       html: `<p>You reported your request as complete.</p> `,
@@ -305,12 +306,13 @@ router.post("/report", async function (req, res) {
   };
   await transporter
     .sendMail({
-      from: "<noreply-dous@dousdev.com>",
+      from: "<noreply-lawn@lawnrequest.com>",
       to: "addous72@gmail.com",
       subject: `Report from: ${res.locals.name}, Reporting: ${req.body.destination}  `,
       html: `${report.reason}`,
     })
     .then(await db.getDb().collection("reports").insertOne(report));
+  transporter.close();
   res.render("confirm", { message: "Report succesfully sent" });
 });
 
