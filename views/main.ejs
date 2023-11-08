@@ -2,6 +2,10 @@
 <html lang="en">
   <head>
     <%- include('includes/head') %>
+    <meta
+      name="description"
+      content="Lawn Request is a platform that takes the hassle out of getting lawn care services. Users can sign up and request various landscapers for there lawn care needs"
+    />
     <style>
       .rotate {
         transition: transform 0.2s;
@@ -15,6 +19,7 @@
     </style>
     <script src="/scripts/searchSuggestions.js" defer></script>
   </head>
+
   <body>
     <%-include('includes/header')%> <% function militaryToRegularTime(militaryTime) { var hours = parseInt(militaryTime); var ampm = 'am'; if (hours >= 12) { ampm = 'pm'; if (hours > 12) { hours -=
     12; } } return hours + ' ' + ampm; } %>
