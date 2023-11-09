@@ -19,6 +19,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use("/images", express.static("images"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(cors());
 
@@ -36,6 +37,12 @@ app.use(
 );
 
 app.use(async function (req, res, next) {
+  res.locals.url = "localhost:3000";
+
+  if (process.env.URL) {
+    res.locals.url = process.env.URL;
+  }
+
   const isAuth = req.session.isAuth;
 
   if (!isAuth) {

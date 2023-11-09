@@ -5,6 +5,9 @@ const router = express.Router();
 const rq = require("../models/requestsPerDay");
 const uploader = require("../models/multerConfig");
 const vti = require("../models/validateTimeInput").validateTimeInputs;
+const uuid = require("uuid");
+const chatCtrl = require("../models/chatControl");
+
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
@@ -131,6 +134,7 @@ router.post(
         term += destination.address[key];
       }
     }
+    const chatId = uuid.v4();
     await db
       .getDb()
       .collection("landscapers")
@@ -144,10 +148,24 @@ router.post(
               displayExpiration: endDate,
               search: term,
               expiration: endTime,
+              chatId: chatId,
             },
           },
         }
       );
+
+    await db
+      .getDb()
+      .collection("chat")
+      .insertOne({
+        _id: chatId,
+        participants: {
+          ls: res.locals.userId,
+          user: destination._id,
+        },
+        messages: [],
+        disabled: false,
+      });
     res.redirect("/overview");
   })
 );
@@ -208,7 +226,7 @@ router.post(
       .collection("landscapers")
       .updateOne({ _id: res.locals.userId }, { $pull: { accepted: { destinationId: destination._id } } })
       .then(await db.getDb().collection("cancelLog").insertOne({ _id: new Date().getTime(), landscaper: res.locals.userId, user: destination._id, reason: req.body.reason }));
-
+    await chatCtrl.disable(res.locals.userId, destination._id);
     return res.redirect("/overview");
   })
 );
@@ -238,6 +256,7 @@ router.post(
         });
       });
     transporter.close();
+    await chatCtrl.disable(res.locals.userId, destination._id);
     res.redirect("/overview");
   })
 );

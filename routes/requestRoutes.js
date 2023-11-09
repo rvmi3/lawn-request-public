@@ -4,8 +4,8 @@ const router = express.Router();
 const transporter = require("../models/emailTransporter");
 const rq = require("../models/requestsPerDay");
 const { uuid } = require("uuidv4");
-const he = require("he");
 
+const chatCtrl = require("../models/chatControl");
 router.get("/request/:id", async function (req, res) {
   if (res.locals.userId === req.params.id) {
     return res.render("404", { message: "Cant send request to yourself" });
@@ -151,6 +151,7 @@ router.get("/sent", async function (req, res) {
     .collection("landscapers")
     .find({ requests: { $elemMatch: { requestId: res.locals.userId } } })
     .toArray();
+
   if (landscaper.length !== 0) {
     for (const ls of landscaper) {
       for (const reqs of ls.requests) {
@@ -167,7 +168,7 @@ router.get("/sent", async function (req, res) {
     if (landscaper) {
       for (const acc of landscaper.accepted) {
         if (acc.destinationId === res.locals.userId) {
-          request.push({ destination: landscaper._id, to: landscaper.name, when: acc.displayExpiration, accepted: true });
+          request.push({ destination: landscaper._id, to: landscaper.name, when: acc.displayExpiration, accepted: true, chatId: acc.chatId });
         }
       }
     }
@@ -215,6 +216,8 @@ router.post("/cancel-sent", async (req, res) => {
       .collection("landscapers")
       .updateOne({ _id: landscaper._id }, { $pull: { accepted: { destinationId: destination._id } } });
   }
+
+  await chatCtrl.disable(landscaper._id, destination._id);
   return res.redirect("/sent");
 });
 
@@ -241,7 +244,8 @@ router.post("/complete-sent", async (req, res) => {
         .collection("landscapers")
         .updateOne({ _id: req.body.destination }, { $pull: { accepted: { destinationId: res.locals.userId } }, $inc: { completed: 1 } })
     )
-    .then(await db.getDb().collection("completionLog").insertOne({ _id: new Date().getTime(), landscaper: res.locals.userId, user: req.body.destination, by: "user" }))
+    .then(await db.getDb().collection("completionLog").insertOne({ _id: new Date().getTime(), landscaper: req.body.destination, user: res.locals.userId, by: "user" }))
+    .then(await chatCtrl.disable(req.body.destination, res.locals.userId))
     .catch(async () => {
       await db.getDb().collection("errorLog").insertOne({
         destination: res.locals.user,
@@ -249,6 +253,7 @@ router.post("/complete-sent", async (req, res) => {
       });
     });
   transporter.close();
+
   res.redirect("/sent");
 });
 router.get("/saved", async function (req, res) {

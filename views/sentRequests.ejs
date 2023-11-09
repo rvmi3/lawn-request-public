@@ -23,7 +23,7 @@
           </div>
 
           <p>Will Be Completed By <%= req.when %></p>
-
+          <a class="btn btn-info btn-sm mb-1" href="/chat/<%=req.chatId%>">Open Chat</a>
           <div class="d-flex">
             <form action="/complete-sent" method="post">
               <%- include("includes/token") %>

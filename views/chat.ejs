@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('includes/head') %>
+
+    <script src="/scripts/chat.js" defer></script>
+  </head>
+  <body>
+    <%- include('includes/header') %> <%- include('includes/token') %>
+    <div class="container mt-4">
+      <input hidden value="<%=id%>" id="chatId" name="chatId" />
+
+      <ul id="chatbox" class="list-group" style="max-height: 400px; overflow-y: auto">
+        <% for (const msg of chat) { %> <%if(locals.userId === msg.id){%>
+        <li class="list-group-item pb-0">
+          <p><strong class="text-success"><%= msg.name %>:</strong> <%= msg.message %></p>
+        </li>
+        <%}else{%>
+        <li class="list-group-item pb-0">
+          <p><strong><%= msg.name %>:</strong> <%= msg.message %></p>
+        </li>
+        <% }} %>
+      </ul>
+
+      <div class="input-group mt-4">
+        <input type="text" class="form-control" name="message" id="message" placeholder="Type your message..." />
+        <div class="input-group-append">
+          <button class="btn" id="send-btn" style="background-color: #68a357; color: white">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <%- include('includes/footer') %>
+  </body>
+</html>
