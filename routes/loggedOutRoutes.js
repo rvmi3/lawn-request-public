@@ -110,7 +110,7 @@ router.post("/signup", async function (req, res, next) {
           time: new Date().getTime(),
         });
       });
-    res.render("confirm", { message: `Verification email sent to ${userEmail}, verify account to complete account creation` });
+    res.render("confirm", { message: `Verification email sent to ${userEmail}, verify account to complete account creation. Make sure to check spam` });
   } catch (err) {
     next(err);
   }
@@ -247,7 +247,7 @@ router.post("/password-reset-request", async function (req, res, next) {
       });
       transporter.close();
 
-      res.render("confirm", { message: `Password reset link sent to ${foundUser.email}.` }); // take to "check email" page
+      res.render("confirm", { message: `Password reset link sent to ${foundUser.email}. Make sure to check spam` }); // take to "check email" page
     } else {
       res.redirect("/");
     }
