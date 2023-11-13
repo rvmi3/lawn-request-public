@@ -7,7 +7,7 @@ If you want to use this application on your local machine you will need two thin
     1. A running local mongodb server
     2. Node.js installed
 
-If you want to use this application, visit www.lawnrequest.com
+If you want to use this application, visit https://www.lawnrequest.com
 
 This project was originally going to be a junk pickup website where users can find junk and collect it for free.
 
